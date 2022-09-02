@@ -195,7 +195,7 @@
           <div class="col-md-3 col-sm-6">
               <div class="overlay-effect effects clearfix">
                   <div class="img">
-                      <a href="https://don-sebastian.github.io/Apple/"  title="Project One"><img class="grayscale" src="img/Applelogocrop.png" alt="Portfolio Item"></a>
+                      <a href="https://don-sebastian.github.io/Apple/"  title="Project One"><img class="grayscale" src="img/applelogocrop.png" alt="Portfolio Item"></a>
                   </div>
               </div>
           </div>
@@ -365,35 +365,65 @@
 			<div class="row">
 			  <!-- Google Maps (Change your Settings below) -->
 			  <div class="col-md-6">
-			    <div id="googlemaps"></div>
+			    <!-- <div id="googlemaps"></div> -->
 			  </div>
 			  <!-- Contact Form -->
 			  <div class="col-md-6 contact">
-			     <form id="submit-form" action="">
-				            <!-- Name -->
+			     <!-- <form id="submit-form" action="">
+				            !-- Name --
                             <div class="row">
                                 <div class="col-md-6">
-								    <!-- E-Mail -->
+								    !-- E-Mail --
                                     <div class="form-group">
-                                        <input type="text" class="form-control" name="name" placeholder="Your name" required>
+                                        <input id="name" type="text" class="form-control" name="name" placeholder="Your name" >
+                                        
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-								    <!-- Phone Number -->
+								    !-- Phone Number --
                                     <div class="form-group">
-                                        <input type="email" name="email" class="form-control" placeholder="Email address" required>
+                                        <input id="email" type="email" name="email" class="form-control" placeholder="Email address" >
                                     </div>
                                 </div>
                             </div>
-							<!-- Message Area -->
+							!-- Message Area --
                             <div class="form-group">
-                                <textarea class="form-control" name="message" placeholder="Write you message here..." style="height:232px;"></textarea>
+                                <textarea id="message" class="form-control" name="message" placeholder="Write you message here..." style="height:232px;"></textarea>
                             </div>
-							<!-- Subtmit Button -->
+                            <input id="subject" type="text">
+							!-- Subtmit Button --
                             <button type="submit" class="btn btn-send">
                                 Send message
                             </button>
-                        </form>
+                        </form> -->
+
+                        <form id="gform" class="row contact_form" action="">
+                          <div class="col-md-6">
+                              <div class="form-group">
+                                  <input type="text" class="form-control" id="name" name="name" placeholder="Enter your name">
+                                  <small style="color: red;" id="name-error"></small>
+                              </div>
+                              <div class="form-group">
+                                  <input type="email" class="form-control" id="email" name="email" placeholder="Enter email address">
+                                  <small style="color: red;" id="email-error"></small>
+                              </div>
+                              <div class="form-group">
+                                  <input type="text" class="form-control" id="subject" name="subject" placeholder="Enter Subject">
+                                  <small style="color: red;" id="subject-error"></small>
+                              </div>
+                          </div>
+                          <div class="col-md-6">
+                              <div class="form-group">
+                                  <textarea class="form-control" name="message" id="message" rows="1" placeholder="Enter Message"></textarea>
+                                  <small style="color: red;" id="msg-error"></small>
+                              </div>
+                          </div>
+                          <div class="col-md-12 text-right">
+                              <button type="submit" value="submit" class="primary_btn">
+                                  <span>Send Message</span>
+                              </button>
+                          </div>
+                      </form>
 			  </div>
 			</div>
 			<br>
@@ -490,33 +520,141 @@
 	
     </script>
 	
-	<!-- TEXT ROTATOR SETTINGS -->
-    <script type="text/javascript">
-    $(".rotate").textrotator({
-      animation: "fade", // You can pick the way it animates when rotating through words. Options are dissolve (default), fade, flip, flipUp, flipCube, flipCubeUp and spin.
-      separator: ",", // If you don't want commas to be the separator, you can define a new separator (|, &, * etc.) by yourself using this field.
-      speed: 2000 // How many milliseconds until the next word show.
-    });
-    </script>
-    <script>
-      $("#submit-form").submit((e)=>{
-          e.preventDefault()
-          $.ajax({
-              url:"https://script.google.com/macros/s/AKfycbzcgUWN6Xudha20gxHlazaGgrtoBjjL3n9YwD4rmUoQV9x68mJnDbDKgQhiRkPG1k3r/exec",
-              data:$("#submit-form").serialize(),
-              method:"post",
-              success:function (response){
-                  alert("Form submitted successfully")
-                  window.location.reload()
-                  //window.location.href="https://google.com"
-              },
-              error:function (err){
-                  alert("Something Error")
-  
-              }
-          })
-      })
-  </script>
 	
+
+  <script>
+
+    const form = document.getElementById("gform");
+    const username = document.getElementById("name");
+    const email = document.getElementById("email");
+    const subject = document.getElementById("subject");
+    const message = document.getElementById("message");
+
+    form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    
+        const validation = checkInput();
+    if (validation){
+
+
+        const scriptURL ="https://script.google.com/macros/s/AKfycbzcgUWN6Xudha20gxHlazaGgrtoBjjL3n9YwD4rmUoQV9x68mJnDbDKgQhiRkPG1k3r/exec";
+    
+    
+        fetch(scriptURL, { method: "POST", body: new FormData(form) })
+        .then((response) => {
+        console.log("Success!", response);
+
+        const Toast = Swal.mixin({
+            toast: true,
+            position: "bottom-start",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+            toast.addEventListener("mouseenter", Swal.stopTimer);
+            toast.addEventListener("mouseleave", Swal.resumeTimer);
+            },
+        });
+
+        Toast.fire({
+            icon: "success",
+            title: "Form Submitted Successfully",
+        });
+
+        setTimeout(function(){
+        location.reload();
+        },3000)
+        })
+        .catch((error) => {
+        console.error("Error!", error.message);
+        
+        });
+    
+    }
+    
+    else{
+    const Toast = Swal.mixin({
+        toast: true,
+        position: "bottom-start",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+        toast.addEventListener("mouseenter", Swal.stopTimer);
+        toast.addEventListener("mouseleave", Swal.resumeTimer);
+        },
+    });
+
+    Toast.fire({
+        icon: "error",
+        title: "Something Went Wrong",
+    });
+    }
+
+
+    });
+
+
+    function checkInput() {
+    const isvalid = new Array();
+    const nameval = username.value;
+    const emailval = email.value.trim();
+    const subjectval = subject.value.trim();
+    const messageval = message.value.trim();
+
+
+    if (nameval === "" || nameval.match(/^ *$/) !== null) {
+        
+        document.getElementById("name-error").innerText = "Name cannot be blank."
+        isvalid.push(false);
+    } else {
+        isvalid.push(true);
+    }
+
+
+    if (emailval === "") {
+    document.getElementById("email-error").innerText = "Email field can't be blank"
+        isvalid.push(false);
+    } else if (!isEmail(emailval)) {
+        document.getElementById("email-error").innerText ="Please enter a valid email"
+        isvalid.push(false);
+    } else {
+    
+        isvalid.push(true);
+    }
+
+
+    if (subjectval === ""||subjectval.match(/^ *$/) !== null) {
+        isvalid.push(false);
+        document.getElementById("subject-error").innerText = "Subject field can't be empty"
+    } else {
+        
+        isvalid.push(true);
+    }
+
+
+    if (messageval === "" || messageval.match(/^ *$/) !== null) {
+        document.getElementById("msg-error").innerText = "Message field is empty"
+        isvalid.push(false);
+    } else {
+        
+        isvalid.push(true);
+    }
+
+
+    if (isvalid.includes(false)) return false;
+    else return true;
+
+
+
+    }
+
+    function isEmail(email) {
+    const filter = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+    if(filter.test(email)) return true;
+    else return false;
+    }
+</script>
+	<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     </body>
 </html>
